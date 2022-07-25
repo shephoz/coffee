@@ -7,6 +7,9 @@
         <td>
           {{ brewing ? `${brewing.bean}(${brewing.brewedAt})` : "なし" }}
         </td>
+        <td>
+          <button v-if="brewing" @click="drinkUp(color)">飲んだ</button>
+        </td>
       </tr>
     </table>
 
@@ -23,6 +26,54 @@
         </tr>
       </thead>
       <tbody>
+        <tr>
+          <td><input v-model="newBrewing.brewedAt" /></td>
+          <td>
+            <select v-model="newBrewing.bean">
+              <option
+                v-for="bean in beansAvailable"
+                :key="bean.id"
+                :value="bean.id"
+              >
+                {{ bean.name }}
+              </option>
+            </select>
+          </td>
+          <td><input v-model="newBrewing.grind" /></td>
+          <td><input v-model="newBrewing.temperature" /></td>
+          <td><input v-model="newBrewing.amount" /></td>
+          <td>
+            <textarea style="width: 400px" v-model="newBrewing.comment" />
+          </td>
+          <td><input v-model="newBrewing.rating" /></td>
+          <td>
+            <label>
+              <input
+                type="radio"
+                v-model="newBrewing.bottleColor"
+                name="botle-color"
+                value="black"
+              />black
+            </label>
+            <label>
+              <input
+                type="radio"
+                v-model="newBrewing.bottleColor"
+                name="botle-color"
+                value="white"
+              />white
+            </label>
+            <label>
+              <input
+                type="radio"
+                v-model="newBrewing.bottleColor"
+                name="botle-color"
+                value="blue"
+              />blue
+            </label>
+            <button @click="addBrewing()">作成</button>
+          </td>
+        </tr>
         <tr v-for="brewing in brewings" :key="brewing.id">
           <td>{{ brewing.brewedAt }}</td>
           <td>{{ brewing.bean }}</td>
@@ -63,8 +114,8 @@
 </template>
 
 <script>
-import { getBrewings } from "@/repository/brewings.js";
-import { getBottles } from "@/repository/bottles.js";
+import { getBrewings, createBrewing } from "@/repository/brewings.js";
+import { getBottles, setBottle } from "@/repository/bottles.js";
 import { getBeans } from "@/repository/beans.js";
 
 export default {
@@ -76,9 +127,26 @@ export default {
     brewings: [],
     beans: [],
     bottles: new Map(),
+    newBrewing: {
+      brewedAt: `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`,
+      bean: "",
+      grind: 11,
+      temperature: 2,
+      amount: 1000,
+      comment: "",
+      rating: null,
+      bottleColor: null,
+    },
   }),
   async created() {
     await this.fetchData();
+  },
+  computed: {
+    beansAvailable() {
+      return this.beans.filter((bean) => !bean.usedUpAt);
+    },
   },
   methods: {
     async fetchData() {
@@ -86,6 +154,55 @@ export default {
         this.bottles = await getBottles();
         this.brewings = await getBrewings();
         this.beans = await getBeans();
+      } catch (error) {
+        alert("Request Error: " + JSON.stringify(error));
+      }
+    },
+    async drinkUp(color) {
+      if (!confirm(`Drinked up ${color} bottle?`)) return;
+      try {
+        await setBottle(color, null);
+        this.bottles.set(color, null);
+      } catch (error) {
+        alert("Request Error: " + JSON.stringify(error));
+      }
+    },
+    async addBrewing() {
+      try {
+        const {
+          brewedAt,
+          bean,
+          grind,
+          temperature,
+          amount,
+          comment,
+          rating,
+          bottleColor,
+        } = this.newBrewing;
+        const data = await createBrewing({
+          brewed_at: brewedAt,
+          bean,
+          grind,
+          temperature,
+          amount,
+          comment,
+          rating,
+        });
+        const beanName = this.beans.find((el) => el.id === bean).name;
+        this.brewings.unshift({
+          brewedAt,
+          bean: beanName,
+          grind,
+          temperature,
+          amount,
+          comment,
+          rating,
+        });
+        await setBottle(bottleColor, data[0].id);
+        this.bottles.set(bottleColor, {
+          brewedAt,
+          bean: beanName,
+        });
       } catch (error) {
         alert("Request Error: " + JSON.stringify(error));
       }

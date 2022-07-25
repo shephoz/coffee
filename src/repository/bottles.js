@@ -19,3 +19,14 @@ export async function getBottles() {
     ])
   );
 }
+
+export async function setBottle(color, brewingId) {
+  const { data, error } = await supabase
+    .from("bottles")
+    .update({ brewing: brewingId })
+    .eq("color", color);
+  if (error) {
+    throw error;
+  }
+  return data;
+}

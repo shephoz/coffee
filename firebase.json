@@ -1,0 +1,6 @@
+{
+  "hosting": {
+    "site": "coffee-shephoz",
+    "public": "dist"
+  }
+}

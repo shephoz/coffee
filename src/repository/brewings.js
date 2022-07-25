@@ -13,12 +13,15 @@ const temperatureMap = {
 };
 
 export async function getBrewings() {
-  const brewings = await supabase
+  const { data, error } = await supabase
     .from("brewings")
     .select(
       `id, brewed_at, bean:bean(name), grind, temperature, amount, comment, rating`
     );
-  return brewings.data
+  if (error) {
+    throw error;
+  }
+  return data
     .map((brewing) => ({
       id: brewing.id,
       brewedAt: brewing.brewed_at,

@@ -1,12 +1,14 @@
 import supabase from "@/repository/supabase";
 
 export async function getBottles() {
-  const bottles = await supabase
+  const { data, error } = await supabase
     .from("bottles")
-    .select(`color, brewing(brewed_at, bean:bean(name))`);
-
+    .select(`color, brewing(brewed_at, bean(name))`);
+  if (error) {
+    throw error;
+  }
   return new Map(
-    bottles.data.map((bottle) => [
+    data.map((bottle) => [
       bottle.color,
       bottle.brewing
         ? {

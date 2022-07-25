@@ -78,9 +78,18 @@ export default {
     bottles: new Map(),
   }),
   async created() {
-    this.bottles = await getBottles();
-    this.brewings = await getBrewings();
-    this.beans = await getBeans();
+    await this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      try {
+        this.bottles = await getBottles();
+        this.brewings = await getBrewings();
+        this.beans = await getBeans();
+      } catch (error) {
+        alert("Request Error: " + JSON.stringify(error));
+      }
+    },
   },
 };
 </script>

@@ -5,7 +5,10 @@
       <tr v-for="[color, brewing] in bottles" :key="color">
         <td :style="{ width: '30px', backgroundColor: color }"></td>
         <td>
-          {{ brewing ? `${brewing.bean}(${brewing.brewedAt})` : "なし" }}
+          {{ labelOfBrewingInBottle(brewing[0]) }}
+        </td>
+        <td>
+          {{ labelOfBrewingInBottle(brewing[1]) }}
         </td>
         <td>
           <button v-if="brewing" @click="drinkUp(color)">飲んだ</button>
@@ -158,11 +161,18 @@ export default {
         alert("Request Error: " + JSON.stringify(error));
       }
     },
+    labelOfBrewingInBottle(brewing) {
+      return brewing ? `${brewing.bean}(${brewing.brewedAt})` : "なし";
+    },
     async drinkUp(color) {
       if (!confirm(`Drinked up ${color} bottle?`)) return;
       try {
-        await setBottle(color, null);
-        this.bottles.set(color, null);
+        const [{ brewing, nextup }] = await setBottle(
+          color,
+          this.bottles.get(color)[1]?.id || null,
+          null
+        );
+        this.bottles.set(color, [brewing, nextup]);
       } catch (error) {
         alert("Request Error: " + JSON.stringify(error));
       }

@@ -81,10 +81,10 @@
           <td>{{ brewing.brewedAt }}</td>
           <td>{{ brewing.bean }}</td>
           <td>{{ brewing.grind }}</td>
-          <td>{{ brewing.temperature }}</td>
+          <td>{{ temperatureView(brewing.temperature) }}</td>
           <td>{{ brewing.amount }}</td>
           <td style="width: 400px">{{ brewing.comment }}</td>
-          <td>{{ brewing.rating }}</td>
+          <td>{{ ratingView(brewing.rating) }}</td>
         </tr>
       </tbody>
     </table>
@@ -108,7 +108,7 @@
           <td>{{ bean.shop }}</td>
           <td>{{ bean.amount }}</td>
           <td>{{ bean.price }}</td>
-          <td>{{ bean.roast }}</td>
+          <td>{{ roastView(bean.roast) }}</td>
           <td>{{ bean.usedUpAt }}</td>
         </tr>
       </tbody>
@@ -117,9 +117,14 @@
 </template>
 
 <script>
-import { getBrewings, createBrewing } from "@/repository/brewings.js";
+import {
+  getBrewings,
+  createBrewing,
+  ratingMap,
+  temperatureMap,
+} from "@/repository/brewings.js";
 import { getBottles, setBottle } from "@/repository/bottles.js";
-import { getBeans } from "@/repository/beans.js";
+import { getBeans, roastMap } from "@/repository/beans.js";
 
 export default {
   name: "Main",
@@ -216,6 +221,15 @@ export default {
       } catch (error) {
         alert("Request Error: " + JSON.stringify(error));
       }
+    },
+    ratingView(rating) {
+      return ratingMap[rating];
+    },
+    temperatureView(temperature) {
+      return temperatureMap[temperature];
+    },
+    roastView(roast) {
+      return roastMap[roast];
     },
   },
 };

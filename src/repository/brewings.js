@@ -1,12 +1,12 @@
 import supabase from "@/repository/supabase";
 
-const ratingMap = {
+export const ratingMap = {
   1: "☆",
   2: "☆☆",
   3: "☆☆☆",
 };
 
-const temperatureMap = {
+export const temperatureMap = {
   1: "常温",
   2: "半氷",
   3: "氷出し",
@@ -27,10 +27,10 @@ export async function getBrewings() {
       brewedAt: brewing.brewed_at,
       bean: brewing.bean.name,
       grind: brewing.grind,
-      temperature: temperatureMap[brewing.temperature],
+      temperature: brewing.temperature,
       amount: brewing.amount,
       comment: brewing.comment,
-      rating: ratingMap[brewing.rating],
+      rating: brewing.rating,
     }))
     .sort((b1, b2) => (b1.brewedAt < b2.brewedAt ? 1 : -1));
 }

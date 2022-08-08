@@ -1,6 +1,6 @@
 import supabase from "@/repository/supabase";
 
-const roastMap = {
+export const roastMap = {
   1: "浅煎り",
   2: "中煎り",
   3: "深煎り",
@@ -24,7 +24,7 @@ export async function getBeans() {
       shop: bean.shop.name,
       amount: bean.amount,
       price: bean.price,
-      roast: roastMap[bean.roast],
+      roast: bean.roast,
       usedUpAt: bean.used_up_at,
     }))
     .sort((b1, b2) => (b1.boughtAt < b2.boughtAt ? 1 : -1));

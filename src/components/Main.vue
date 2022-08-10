@@ -8,10 +8,28 @@
           {{ labelOfBrewingInBottle(brewing[0]) }}
         </td>
         <td>
+          <div v-if="brewing[0]">
+            <label v-for="(label, val) in ratingMap()" :key="val">
+              <input
+                type="radio"
+                :name="'rating-' + color"
+                :value="val"
+                :checked="isRatingChecked(brewing[0].id, val)"
+                @change="setRating(brewing[0].id, val)"
+              />
+              {{ label }} </label
+            ><br />
+            <textarea
+              @input="setComment(brewing[0].id, $event.target.value)"
+              :value="getComment(brewing[0].id)"
+            ></textarea>
+          </div>
+        </td>
+        <td>
           {{ labelOfBrewingInBottle(brewing[1]) }}
         </td>
         <td>
-          <button v-if="brewing" @click="drinkUp(color)">飲んだ</button>
+          <button v-if="brewing[0]" @click="drinkUp(color)">飲んだ</button>
         </td>
       </tr>
     </table>
@@ -122,6 +140,8 @@ import {
   createBrewing,
   ratingMap,
   temperatureMap,
+  setBrewingComment,
+  setBrewingRating,
 } from "@/repository/brewings.js";
 import { getBottles, setBottle } from "@/repository/bottles.js";
 import { getBeans, roastMap } from "@/repository/beans.js";
@@ -224,6 +244,29 @@ export default {
     },
     ratingView(rating) {
       return ratingMap[rating];
+    },
+    ratingMap() {
+      return ratingMap;
+    },
+    isRatingChecked(brewingId, rating) {
+      return this.brewings.find((b) => b.id === brewingId)?.rating == rating;
+    },
+    async setRating(brewingId, rating) {
+      try {
+        await setBrewingRating(brewingId, rating);
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    getComment(brewingId) {
+      return this.brewings.find((b) => b.id === brewingId)?.comment;
+    },
+    async setComment(brewingId, comment) {
+      try {
+        await setBrewingComment(brewingId, comment);
+      } catch (e) {
+        console.error(e);
+      }
     },
     temperatureView(temperature) {
       return temperatureMap[temperature];

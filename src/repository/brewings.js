@@ -35,6 +35,28 @@ export async function getBrewings() {
     .sort((b1, b2) => (b1.brewedAt < b2.brewedAt ? 1 : -1));
 }
 
+export async function setBrewingRating(id, rating) {
+  const { data, error } = await supabase
+    .from("brewings")
+    .update({ rating })
+    .match({ id });
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
+export async function setBrewingComment(id, comment) {
+  const { data, error } = await supabase
+    .from("brewings")
+    .update({ comment })
+    .match({ id });
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
 export async function createBrewing(newBrewing) {
   const { data, error } = await supabase.from("brewings").insert(newBrewing);
   if (error) {

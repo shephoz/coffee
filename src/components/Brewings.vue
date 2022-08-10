@@ -125,6 +125,7 @@ export default {
           comment,
           rating,
         });
+        await BottlesRepository.addBottle(bottleColor, data[0].id);
       } catch (error) {
         alert("Request Error: " + JSON.stringify(error));
       }

@@ -32,6 +32,31 @@ export default class BottlesRepository {
     return data;
   }
 
+  static async addBottle(color, brewingId) {
+    const {
+      data: [{ brewing: curBrewing, nextup: curNextUp }],
+      error: error1,
+    } = await supabase
+      .from("bottles")
+      .select("brewing, nextup")
+      .match({ color });
+    if (error1) {
+      throw error1;
+    }
+
+    const { data, error: error2 } = await supabase
+      .from("bottles")
+      .update({
+        brewing: curNextUp || curBrewing || brewingId,
+        nextup: curBrewing ? brewingId : null,
+      })
+      .match({ color });
+    if (error2) {
+      throw error2;
+    }
+    return data;
+  }
+
   static convertBrewing(brewing) {
     return brewing
       ? {

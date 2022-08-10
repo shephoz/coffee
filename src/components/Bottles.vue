@@ -39,27 +39,14 @@ import BottlesRepository from "@/repository/bottles.js";
 
 export default {
   name: "Bottles",
-  data: () => ({
-    brewings: [],
-    bottles: new Map([
-      ["blue", [null, null]],
-      ["black", [null, null]],
-      ["white", [null, null]],
-    ]),
-  }),
-  async created() {
-    await this.fetchData();
+  data: () => ({}),
+  props: {
+    bottles: Object,
+    brewings: Array,
   },
+  async created() {},
   computed: {},
   methods: {
-    async fetchData() {
-      try {
-        this.bottles = await BottlesRepository.getBottles();
-        this.brewings = await BrewingRepository.getBrewings();
-      } catch (error) {
-        alert("Request Error: " + JSON.stringify(error));
-      }
-    },
     labelOfBrewingInBottle(brewing) {
       return brewing ? `${brewing.bean}(${brewing.brewedAt})` : "なし";
     },

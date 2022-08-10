@@ -30,20 +30,12 @@ import BeansRepository from "@/repository/beans.js";
 
 export default {
   name: "Beans",
-  data: () => ({
-    beans: [],
-  }),
-  async created() {
-    await this.fetchData();
+  data: () => ({}),
+  props: {
+    beans: Array,
   },
+  async created() {},
   methods: {
-    async fetchData() {
-      try {
-        this.beans = await BeansRepository.getBeans();
-      } catch (error) {
-        alert("Request Error: " + JSON.stringify(error));
-      }
-    },
     roastView(roast) {
       return BeansRepository.roastMap[roast];
     },

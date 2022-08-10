@@ -17,7 +17,7 @@
         <td>
           <select v-model="newBrewing.bean">
             <option
-              v-for="bean in beansAvailable"
+              v-for="bean in availableBeans"
               :key="bean.id"
               :value="bean.id"
             >
@@ -75,44 +75,35 @@
 
 <script>
 import BrewingRepository from "@/repository/brewings.js";
-import BeansRepository from "@/repository/beans.js";
 import BottlesRepository from "@/repository/bottles.js";
+
+function refreshedNewBrewing() {
+  return {
+    brewedAt: `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`,
+    bean: "",
+    grind: 11,
+    temperature: 2,
+    amount: 1000,
+    comment: "",
+    rating: null,
+    bottleColor: null,
+  };
+}
 
 export default {
   name: "Brewings",
   data: () => ({
-    beans: [],
-    brewings: [],
-    newBrewing: {
-      brewedAt: `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}-${new Date().getDate().toString().padStart(2, "0")}`,
-      bean: "",
-      grind: 11,
-      temperature: 2,
-      amount: 1000,
-      comment: "",
-      rating: null,
-      bottleColor: null,
-    },
+    newBrewing: refreshedNewBrewing(),
   }),
-  async created() {
-    await this.fetchData();
+  props: {
+    availableBeans: Array,
+    brewings: Array,
   },
-  computed: {
-    beansAvailable() {
-      return this.beans.filter((bean) => !bean.usedUpAt);
-    },
-  },
+  async created() {},
+  computed: {},
   methods: {
-    async fetchData() {
-      try {
-        this.beans = await BeansRepository.getBeans();
-        this.brewings = await BrewingRepository.getBrewings();
-      } catch (error) {
-        alert("Request Error: " + JSON.stringify(error));
-      }
-    },
     async addBrewing() {
       try {
         const {
@@ -134,24 +125,11 @@ export default {
           comment,
           rating,
         });
-        const beanName = this.beans.find((el) => el.id === bean).name;
-        this.brewings.unshift({
-          brewedAt,
-          bean: beanName,
-          grind,
-          temperature,
-          amount,
-          comment,
-          rating,
-        });
-        await BottlesRepository.setBottle(bottleColor, data[0].id);
-        this.bottles.set(bottleColor, {
-          brewedAt,
-          bean: beanName,
-        });
       } catch (error) {
         alert("Request Error: " + JSON.stringify(error));
       }
+      this.newBrewing = refreshedNewBrewing();
+      this.$emit("refresh");
     },
     ratingView(rating) {
       return BrewingRepository.ratingMap[rating];

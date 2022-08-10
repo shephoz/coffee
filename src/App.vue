@@ -1,5 +1,5 @@
 <template>
-  <Main msg="Coffee Journal" />
+  <Main />
 </template>
 
 <script>

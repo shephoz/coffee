@@ -154,7 +154,11 @@ export default {
   data: () => ({
     brewings: [],
     beans: [],
-    bottles: new Map(),
+    bottles: new Map([
+      ["blue", [null, null]],
+      ["black", [null, null]],
+      ["white", [null, null]],
+    ]),
     newBrewing: {
       brewedAt: `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
         .toString()

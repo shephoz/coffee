@@ -29,4 +29,23 @@ export default class BeansRepository {
       }))
       .sort((b1, b2) => (b1.boughtAt < b2.boughtAt ? 1 : -1));
   }
+
+  static async usedUp(id, date) {
+    const { data, error } = await supabase
+      .from("beans")
+      .update({ used_up_at: date })
+      .match({ id });
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
+
+  static async createBean(bean) {
+    const { data, error } = await supabase.from("beans").insert(bean);
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
 }

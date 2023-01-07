@@ -1,13 +1,13 @@
 <template>
   <div>
     <h1>Coffee Journal</h1>
+    <Beans :beans="beans" :shops="shops" @refresh="fetchData()" />
     <Bottles :bottles="bottles" :brewings="brewings" />
     <Brewings
       :brewings="brewings"
       :availableBeans="beans.filter((bean) => !bean.usedUpAt)"
       @refresh="fetchData()"
     />
-    <Beans :beans="beans" />
   </div>
 </template>
 
@@ -19,6 +19,7 @@ import Beans from "@/components/Beans.vue";
 import BeansRepository from "@/repository/beans.js";
 import BrewingRepository from "@/repository/brewings.js";
 import BottlesRepository from "@/repository/bottles.js";
+import ShopsRepository from "@/repository/shops.js";
 
 export default {
   name: "Main",
@@ -35,6 +36,7 @@ export default {
       ["black", [null, null]],
       ["white", [null, null]],
     ]),
+    shops: [],
   }),
   async created() {
     await this.fetchData();
@@ -45,6 +47,7 @@ export default {
         this.beans = await BeansRepository.getBeans();
         this.bottles = await BottlesRepository.getBottles();
         this.brewings = await BrewingRepository.getBrewings();
+        this.shops = await ShopsRepository.getShops();
       } catch (error) {
         alert("Request Error: " + JSON.stringify(error));
       }

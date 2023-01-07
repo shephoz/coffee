@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "NODE_OPTIONS='--openssl-legacy-provider' vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deploy": "vue-cli-service build && firebase deploy --only hosting:coffee-shephoz"
+    "deploy": "vue-cli-service build && firebase deploy --only hosting:coffee-shephoz",
+    "test": "jest"
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.35.4",
     "core-js": "^3.6.5",
+    "jest": "^28.1.3",
     "vue": "^3.0.0"
   },
   "devDependencies": {

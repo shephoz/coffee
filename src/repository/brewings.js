@@ -15,7 +15,7 @@ export default class BrewingsRepository {
 
   static async getBrewings() {
     const { data, error } = await supabase
-      .from("brewings")
+      .from("coffee_brewings")
       .select(
         `id, brewed_at, bean:bean(name), grind, temperature, amount, comment, rating`
       );
@@ -38,7 +38,7 @@ export default class BrewingsRepository {
 
   static async setBrewingRating(id, rating) {
     const { data, error } = await supabase
-      .from("brewings")
+      .from("coffee_brewings")
       .update({ rating })
       .match({ id });
     if (error) {
@@ -49,7 +49,7 @@ export default class BrewingsRepository {
 
   static async setBrewingComment(id, comment) {
     const { data, error } = await supabase
-      .from("brewings")
+      .from("coffee_brewings")
       .update({ comment })
       .match({ id });
     if (error) {
@@ -59,7 +59,9 @@ export default class BrewingsRepository {
   }
 
   static async createBrewing(newBrewing) {
-    const { data, error } = await supabase.from("brewings").insert(newBrewing);
+    const { data, error } = await supabase
+      .from("coffee_brewings")
+      .insert(newBrewing);
     if (error) {
       throw error;
     }

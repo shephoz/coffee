@@ -9,7 +9,7 @@ export default class BeansRepository {
 
   static async getBeans() {
     const { data, error } = await supabase
-      .from("beans")
+      .from("coffee_beans")
       .select(
         `id, name, bought_at, shop(name), amount, price, roast, used_up_at`
       );
@@ -32,7 +32,7 @@ export default class BeansRepository {
 
   static async usedUp(id, date) {
     const { data, error } = await supabase
-      .from("beans")
+      .from("coffee_beans")
       .update({ used_up_at: date })
       .match({ id });
     if (error) {
@@ -42,7 +42,7 @@ export default class BeansRepository {
   }
 
   static async createBean(bean) {
-    const { data, error } = await supabase.from("beans").insert(bean);
+    const { data, error } = await supabase.from("coffee_beans").insert(bean);
     if (error) {
       throw error;
     }

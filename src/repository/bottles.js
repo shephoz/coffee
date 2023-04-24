@@ -3,7 +3,7 @@ import supabase from "@/repository/supabase";
 export default class BottlesRepository {
   static async getBottles() {
     const { data, error } = await supabase
-      .from("bottles")
+      .from("coffee_bottles")
       .select(
         "color, brewing(id, brewed_at, bean(name)), nextup(id, brewed_at, bean(name))"
       );
@@ -23,7 +23,7 @@ export default class BottlesRepository {
 
   static async setBottle(color, brewingId, nextBrewingId) {
     const { data, error } = await supabase
-      .from("bottles")
+      .from("coffee_bottles")
       .update({ brewing: brewingId, nextup: nextBrewingId })
       .eq("color", color);
     if (error) {
@@ -37,7 +37,7 @@ export default class BottlesRepository {
       data: [{ brewing: curBrewing, nextup: curNextUp }],
       error: error1,
     } = await supabase
-      .from("bottles")
+      .from("coffee_bottles")
       .select("brewing, nextup")
       .match({ color });
     if (error1) {
@@ -45,7 +45,7 @@ export default class BottlesRepository {
     }
 
     const { data, error: error2 } = await supabase
-      .from("bottles")
+      .from("coffee_bottles")
       .update({
         brewing: curNextUp || curBrewing || brewingId,
         nextup: curBrewing ? brewingId : null,
